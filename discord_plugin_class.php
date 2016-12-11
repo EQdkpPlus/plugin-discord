@@ -80,6 +80,9 @@ class discord extends plugin_generic
     $this->add_menu('admin', $this->gen_admin_menu());
     
     $this->add_permission('a', 'manage',	'N', $this->user->lang('manage'),	array(2,3));
+    
+    $this->add_hook('avatar_provider', 'discord_avatar_provider_hook', 'avatar_provider');
+    $this->add_hook('user_avatarimg', 'discord_avatar_provider_hook', 'user_avatarimg');
 }
 
   /**
