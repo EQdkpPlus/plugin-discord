@@ -22,7 +22,7 @@
 // EQdkp required files/vars
 define('EQDKP_INC', true);
 define('IN_ADMIN', true);
-define('PLUGIN', 'chat');
+define('PLUGIN', 'discord');
 
 $eqdkp_root_path = './../../../';
 include_once($eqdkp_root_path.'common.php');
