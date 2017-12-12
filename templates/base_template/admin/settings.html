@@ -23,3 +23,22 @@
 	<button class="liteoption" type="reset" name="reset"><i class="fa fa-trash-o"></i>{L_reset}</button>
 </div>
 </form>
+
+<script>
+function checkguildid(){
+	if($('#guild_id').val() == ""){
+		$.get('settings.php{SID}&ajaxguildid', function(data) {
+		    // Now that we've completed the request schedule the next one.
+		    
+		    if(data && data != ""){
+		    	$('#guild_id').val(data);
+		    }
+		    
+		    
+		    if($('#guild_id').val() == "") {
+		    	setTimeout(checkguildid, 5000);
+		    }
+		  });
+	}
+}
+</script>

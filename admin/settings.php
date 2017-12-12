@@ -37,6 +37,7 @@ class discordAdminSettings extends page_generic {
 			message_die($this->user->lang('discord_plugin_not_installed'));
 
 			$handler = array(
+					'ajaxguildid' => array('process' => 'ajaxGuildID', 'csrf' => false, 'check' => 'a_discord_manage'),
 					'save' => array('process' => 'save', 'csrf' => true, 'check' => 'a_discord_manage'),
 			);
 			parent::__construct('a_discord_manage', $handler);
@@ -63,14 +64,25 @@ class discordAdminSettings extends page_generic {
 			$this->display($messages);
 		}
 	}
+	
+	public function ajaxGuildID(){
+		$arrDiscordConfig = $this->config->get_config('discord');
+		$token = $arrDiscordConfig['bot_token'];
+		$result = register('urlfetcher')->fetch('https://discordapp.com/api/users/@me/guilds', array('Authorization: Bot '.$token));
+		if($result){
+			$arrJSON = json_decode($result, true);
+			
+			if(isset($arrJSON[0]['id'])){
+				echo $arrJSON[0]['id'];
+			}
+		}	
+		
+		exit();
+	}
 
 	private function fields(){
 		$arrFields = array(
 				'general' => array(
-						'guild_id' => array(
-								'type' => 'text',
-								'required' => true,
-						),
 						'bot_client_id' => array(
 								'type' => 'text',
 								'required' => true,
@@ -79,12 +91,20 @@ class discordAdminSettings extends page_generic {
 								'type' => 'text',
 								'required' => true,
 						),
+						'guild_id' => array(
+								'type' => 'text',
+								'required' => true,
+						),
 				),
 		);
 		
 		$arrValues		= $this->config->get_config('discord');
 		if($arrValues['bot_client_id'] != ""){
-			$arrFields['general']['bot_client_id']['after_txt'] = '<a href="https://discordapp.com/oauth2/authorize?&client_id='.$arrValues['bot_client_id'].'&scope=bot&permissions=0" target="_blank" class="button">'.$this->user->lang('discord_autorize_bot').'</a>';
+			$arrFields['general']['bot_token']['after_txt'] = '<a href="https://discordapp.com/oauth2/authorize?&client_id='.$arrValues['bot_client_id'].'&scope=bot&permissions=0" target="_blank" class="button" onclick="checkguildid()">'.$this->user->lang('discord_autorize_bot').'</a>';
+		}
+		
+		if($arrValues['bot_client_id'] == "" && $arrValues['bot_token'] == ""){
+			unset($arrFields['general']['guild_id']);
 		}
 		
 		return $arrFields;
