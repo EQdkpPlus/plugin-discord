@@ -41,7 +41,7 @@ class discord extends plugin_generic
     return array_merge(parent::$shortcuts, $shortcuts);
   }
 
-  public $version    = '1.0.2';
+  public $version    = '1.1.0';
   public $build      = '';
   public $copyright  = 'GodMod';
   public $vstatus    = 'Stable';
@@ -83,6 +83,8 @@ class discord extends plugin_generic
     
     $this->add_hook('avatar_provider', 'discord_avatar_provider_hook', 'avatar_provider');
     $this->add_hook('user_avatarimg', 'discord_avatar_provider_hook', 'user_avatarimg');
+    
+    $this->add_portal_module('discordlatestposts');
 }
 
   /**

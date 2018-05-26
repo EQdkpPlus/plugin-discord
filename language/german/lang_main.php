@@ -28,8 +28,8 @@ $lang = array(
   'discord'                   	=> 'Discord',
 
   // Description
-  'sk_discord_short_desc'        => 'Discord einrichten',
-  'sk_discord_long_desc'         => 'Richte die Verbindung zwischen EQdkp Plus und Discord ein',
+  'discord_short_desc'        => 'Discord einrichten',
+  'discord_long_desc'         => 'Richte die Verbindung zwischen EQdkp Plus und Discord ein',
   
   'discord_plugin_not_installed'	=> 'Das Discord-Plugin ist nicht installiert.',
 		
@@ -41,6 +41,18 @@ $lang = array(
 	'discord_f_bot_token'			=> 'Access Token des App Bot-Users',
 	'discord_f_help_bot_token'		=> 'Für weitere Informationen siehe https://eqdkp-plus.eu/wiki/Discord',
 	'discord_autorize_bot'			=> 'Bot zum Gildenserver hinzufügen',	
+		
+	//Portalmodule
+		'discordlatestposts'						=> 'Neuste Discord-Posts',
+		'discordlatestposts_name'					=> 'Neuste Discord-Posts',
+		'discordlatestposts_desc'					=> 'Zeigt die neuesten Beiträge aus deinen Discord-Channels an',
+		'discord_f_amount'							=> 'Anzahl an gezeigten Posts',
+		'discord_f_blackwhitelist'		=> 'Black - oder Whitelists',
+		'discord_f_help_blackwhitelist'	=> 'Ausgewählte Channels zulassen (Whitelist) oder Abweisen (Blacklist)',
+		'discord_f_cachetime'			=> 'Cachingzeit der Posts in Minuten',
+		'discord_f_help_privateforums2' => 'Wähle die Foren für die angezeigte Benutzergruppe aus, auf die die Black-/Whitelist angewendet werden soll',
+		'discordlatestposts_noselectedboards' => "Keine ausgewählten Channels",
+		'discordlatestposts_noentries'	=> 'Keine Einträge vorhanden',
 );
 
 ?>
