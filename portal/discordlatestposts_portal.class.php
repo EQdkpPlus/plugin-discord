@@ -109,7 +109,7 @@ class discordlatestposts_portal extends portal_generic {
 
 		$this->tpl->add_js('
 			setInterval(function() {
-				$.get("'.$this->server_path.'plugins/discord/portal/ajax.php'.$this->SID.'&mid='.$moduleID.'", function(data){
+				$.get("'.$this->server_path.'plugins/discord/portal/ajax.php'.$this->SID.'&mid='.$moduleID.'&wide='.(($this->wide_content) ? 1 : 0).'", function(data){
 					if(data){
 						$(".discordposts_'.$moduleID.'_container").html(data);
 					}

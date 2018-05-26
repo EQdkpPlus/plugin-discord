@@ -26,12 +26,14 @@ include_once($eqdkp_root_path.'common.php');
 
 $moduleID = registry::register('input')->get('mid');
 
+$blnWide = $this->in->get('wide', 0);
+
 //Check Permission
 $objPortal = register('portal');
 if(!$objPortal->check_visibility($moduleID)) exit;
 
 include_once($eqdkp_root_path.'plugins/discord/portal/discordpostviewer.class.php');
-$objDiscordPostViewer = register('discordpostviewer', array($moduleID));
+$objDiscordPostViewer = register('discordpostviewer', array($moduleID, $blnWide));
 
 $out = $objDiscordPostViewer->output();
 
