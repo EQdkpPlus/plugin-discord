@@ -26,7 +26,7 @@ include_once($eqdkp_root_path.'common.php');
 
 $moduleID = registry::register('input')->get('mid');
 
-$blnWide = $this->in->get('wide', 0);
+$blnWide = register('input')->get('wide', 0);
 
 //Check Permission
 $objPortal = register('portal');
