@@ -25,6 +25,11 @@
 </form>
 
 <script>
+function init_functions(){
+	authorizebot();
+	checkguildid();
+}
+
 function checkguildid(){
 	if($('#guild_id').val() == ""){
 		$.get('settings.php{SID}&ajaxguildid', function(data) {
@@ -41,4 +46,37 @@ function checkguildid(){
 		  });
 	}
 }
+
+function authorizebot(){
+	$.get('https://discordapp.com/api/gateway', function(data) {
+	    // Now that we've completed the request schedule the next one.
+	    
+	    if(data && data != ""){	    	
+	    	var connection = new WebSocket(data.url+'?v=6&encoding=json');
+	    	
+	    	var token = $('#bot_token').val();
+
+	    	// When the connection is open, send some data to the server
+			connection.onopen = function () {
+			  connection.send('{"op": 2,"d": {"token": "'+ token +'","properties": {"$os": "linux","$browser": "EQdkp Plus","$device": "EQdkp Plus"}}}');
+			};
+
+			// Log errors
+			connection.onerror = function (error) {
+			  console.log('WebSocket Error ' + error);
+			};
+
+			// Log messages from the server
+			connection.onmessage = function (e) {
+			  console.log('Server: ' + e.data);
+			};
+
+			connection.onclose = function (e) {
+			  console.debug('Server close: ' + e);
+			};
+	    }
+});
+
+}
+
 </script>

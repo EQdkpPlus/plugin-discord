@@ -27,6 +27,8 @@ class discordpostviewer extends gen_class {
 	public function __construct($id, $blnWideContent=false){
 		$this->module_id = $id;
 		$this->wide_content = $blnWideContent;
+		
+		include_once($this->root_path.'plugins/discord/includes/Parsedown.php');
 	}
 	
 	public function getChannels(){
@@ -55,7 +57,10 @@ class discordpostviewer extends gen_class {
 		$intCachetime	= ($this->config('cachetime')) ? (60*intval($this->config('cachetime'))) : (3*60);
 		
 		$arrForums = $this->getChannels();
-		$arrData = array();
+		$arrData = $arrTime = array();
+		
+		$Parsedown = new Parsedown();
+		$Parsedown->setSafeMode(true);
 		
 		$arrDiscordConfig = register('config')->get_config('discord');
 		$guildid = $arrDiscordConfig['guild_id'];
@@ -74,21 +79,22 @@ class discordpostviewer extends gen_class {
 			if($result){
 				$arrJSON = json_decode($result, true);
 				
-				$strLastMessage = $arrJSON['last_message_id'];
+				$strLastMessage = $arrJSON['last_message_id'];				
 				
-				$result = register('urlfetcher')->fetch('https://discordapp.com/api/channels/'.$forumID.'/messages?around='.$strLastMessage.'&limit='.$topicnumber, array('Authorization: Bot '.$token));
+				$result = register('urlfetcher')->fetch('https://discordapp.com/api/channels/'.$forumID.'/messages?around='.$strLastMessage.'&limit='.($topicnumber*2), array('Authorization: Bot '.$token));
 				if($result){
 					$arrJSON = json_decode($result, true);
 					
 					foreach($arrJSON as $arrPost){
+						
 						$arrData[] = array(
 								'username'	=> $arrPost['author']['username'],
-								'content' 	=> $arrPost['content'],
+								'content' 	=> nl2br($Parsedown->text($arrPost['content'])),
 								'topic_link'	=> 'https://discordapp.com/channels/'.$guildid.'/'.$forumID,
 								'topic_title'	=> '#'.$forumName,
 								'posttime'	=> $arrPost['timestamp'],
 								'topic_id'	=> $forumID,
-								'avatar'	=> "https://cdn.discordapp.com/avatars/".$arrPost['author']['id']."/".$arrPost['author']['avatar'].".png",
+								'avatar'	=> ($arrPost['author']['avatar']) ? "https://cdn.discordapp.com/avatars/".$arrPost['author']['id']."/".$arrPost['author']['avatar'].".png" : "https://discordapp.com/assets/1cbd08c76f8af6dddce02c5138971129.png",
 						);
 						
 						$arrTime[] = strtotime($arrPost['timestamp']);
@@ -96,7 +102,7 @@ class discordpostviewer extends gen_class {
 				}
 			}
 		}
-		
+
 		//Now sort the date
 		array_multisort($arrTime, SORT_DESC, SORT_NUMERIC, $arrData);
 		
@@ -115,7 +121,6 @@ class discordpostviewer extends gen_class {
 		$myTarget	= '_blank';
 		
 		if(!$arrData){
-			
 			// Set some Variables we're using in the BB Modules..
 			$topicnumber	= ($this->config('amount')) ? $this->config('amount') : 5;
 			$black_or_white	= ($this->config('blackwhitelist') == 'white') ? 'IN' : 'NOT IN';
@@ -144,7 +149,7 @@ class discordpostviewer extends gen_class {
 			if (count($arrForums) == 0 && $black_or_white == 'IN') return $this->user->lang('discordlatestposts_noselectedboards');
 			
 			$arrData = $this->getPosts($arrForums, $black_or_white, $topicnumber, $this->config('showcontent'));
-			
+
 		} //Now we should have data
 		
 		// Wide Content
@@ -164,7 +169,7 @@ class discordpostviewer extends gen_class {
 					$useravatar = $row['avatar'];
 					if ($useravatar) $myOut .= '<div class="user-avatar-small user-avatar-border floatLeft"><img src="'.sanitize($useravatar).'" class="user-avatar small" /></div>';
 					$myOut .= '<div class="dclp_date small dclp_text_margin">'.sanitize($row['username']).', '.sanitize($row['topic_title']).'; '. $this->time->createTimeTag(strtotime($row['posttime']), $this->time->user_date(strtotime($row['posttime']), true)).'</div>';
-					$myOut .= '<div class="dclp_text">'. sanitize($row['content']).'</div>';
+					$myOut .= '<div class="dclp_text">'. $row['content'].'</div>';
 					$myOut .= '</div><div class="clear"></div>';
 					
 					$myOut .= '  </td>
@@ -194,7 +199,7 @@ class discordpostviewer extends gen_class {
 					$useravatar = $row['avatar'];
 					if ($useravatar) $myOut .= '<div class="user-avatar-small user-avatar-border floatLeft"><img src="'.sanitize($useravatar).'" class="user-avatar small" /></div>';
 					$myOut .= '<div class="dclp_date small dclp_text_margin">'.sanitize($row['username']).', '.sanitize($row['topic_title']).'<br />'. $this->time->createTimeTag(strtotime($row['posttime']), $this->time->user_date(strtotime($row['posttime']), true)).'</div>';
-					$myOut .= '<div class="dclp_text">'. sanitize($row['content']).'</div>';
+					$myOut .= '<div class="dclp_text">'. $row['content'].'</div>';
 					$myOut .= '</div><div class="clear"></div>';
 					
 					$myOut .= '  </td>
