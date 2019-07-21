@@ -55,13 +55,14 @@ if (!class_exists('chat_portal_hook'))
 		$avatarimg = $arrParams['avatarimg'];
 		$strAvatarType = $arrParams['avatartype'];
 		$blnDefault= $arrParams['default'];
-		if($strAvatarType != 'discord') return array('discord' => '');
+		#if($strAvatarType != 'discord') return array('discord' => '');
 		
 		
 		$strEQdkpUsername = $this->pdh->get('user', 'name', array($user_id));
 		
 		$intSize = 128; 
 		$strCachedImage = $this->getCachedImage($strEQdkpUsername, $user_id, $intSize);
+		
 		if (!$strCachedImage){
 			//Download
 			$result = $this->cacheImage($strEQdkpUsername, $user_id, $intSize);
@@ -86,7 +87,7 @@ if (!class_exists('chat_portal_hook'))
 		return false;
 	}
 	
-	public function cacheImage($strEQdkpUsername, $intEQdkpUserID, $intSize){
+	public function cacheImage($strEQdkpUsername, $intEQdkpUserID, $intSize){	
 		$strImage = md5($intEQdkpUserID).'_'.$intSize.'.jpg';
 		$strCacheFolder = $this->pfh->FolderPath('discord','eqdkp');
 		$strRelativeFile = $strCacheFolder.$strImage;
@@ -95,8 +96,9 @@ if (!class_exists('chat_portal_hook'))
 		$arrDiscordConfig = $this->config->get_config('discord');
 		$guild = $arrDiscordConfig['guild_id'];
 		$token = $arrDiscordConfig['bot_token'];
-		$result = register('urlfetcher')->fetch('https://discordapp.com/api/guilds/'.$guild.'/members', array('Authorization: Bot '.$token));
+		$result = register('urlfetcher')->fetch('https://discordapp.com/api/guilds/'.$guild.'/members?limit=1000', array('Authorization: Bot '.$token));
 		$strUserID = $strAvatarHash = false;
+
 		if($result){
 			$arrJSON = json_decode($result, true);
 			

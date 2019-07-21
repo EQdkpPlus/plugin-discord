@@ -91,16 +91,33 @@ class discordlatestposts_portal extends portal_generic {
 		$moduleID = $this->id;
 		
 		//Calculate Max Width
-		if($this->user->style['column_left_width'] != ""){
-			if(strpos($this->user->style['column_left_width'], 'px') !== false){
-				$max_width = (intval($this->user->style['column_left_width']) - 30).'px';
-			} else {
-				$max_width = '97%';
-			}
-			
+		if($this->wide_content){
+			$max_width = '97%';
 		} else {
 			$max_width = "180px";
+			
+			if($this->position == 'left'){
+				if($this->user->style['column_left_width'] != ""){
+					if(strpos($this->user->style['column_left_width'], 'px') !== false){
+						$max_width = (intval($this->user->style['column_left_width']) - 30).'px';
+					} else {
+						$max_width = '97%';
+					}
+					
+				}
+			} elseif($this->position == 'right'){
+				if($this->user->style['column_right_width'] != ""){
+					if(strpos($this->user->style['column_right_width'], 'px') !== false){
+						$max_width = (intval($this->user->style['column_right_width']) - 30).'px';
+					} else {
+						$max_width = '97%';
+					}
+					
+				}
+			}
+
 		}
+
 		
 		$this->tpl->add_css(
 				".dclp_text_margin {
