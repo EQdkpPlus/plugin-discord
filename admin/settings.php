@@ -100,7 +100,7 @@ class discordAdminSettings extends page_generic {
 		
 		$arrValues		= $this->config->get_config('discord');
 		if($arrValues['bot_client_id'] != ""){
-			$arrFields['general']['bot_token']['after_txt'] = '<a href="https://discordapp.com/oauth2/authorize?&client_id='.$arrValues['bot_client_id'].'&scope=bot&permissions=522304" target="_blank" class="button" onclick="init_functions()">'.$this->user->lang('discord_autorize_bot').'</a>';
+			$arrFields['general']['bot_token']['after_txt'] = '<div><br /><a href="https://discordapp.com/oauth2/authorize?&client_id='.$arrValues['bot_client_id'].'&scope=bot&permissions=522304" target="_blank" class="button" onclick="init_functions()">'.$this->user->lang('discord_autorize_bot').'</a></div>';
 		}
 		
 		if($arrValues['bot_client_id'] == "" && $arrValues['bot_token'] == ""){

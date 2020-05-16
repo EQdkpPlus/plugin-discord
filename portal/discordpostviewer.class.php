@@ -31,8 +31,8 @@ class discordpostviewer extends gen_class {
 		include_once($this->root_path.'plugins/discord/includes/Parsedown.php');
 	}
 	
-	public function getChannels(){
-		$arrOut = array();
+	public function getChannels($blnReturnRaw = false){
+		$arrOut = $arrJSON = array();
 		
 		$arrDiscordConfig = register('config')->get_config('discord');
 		$guildid = $arrDiscordConfig['guild_id'];
@@ -49,14 +49,22 @@ class discordpostviewer extends gen_class {
 			}
 		}
 		
-		return $arrOut;
+		return ($blnReturnRaw) ? $arrJSON : $arrOut;
 	}
 	
 	public function getPosts($arrPrivateforums, $black_or_white, $topicnumber, $showcontent){
 		$topicnumber	= ($this->config('amount')) ? $this->config('amount') : 5;
 		$intCachetime	= ($this->config('cachetime')) ? (60*intval($this->config('cachetime'))) : (3*60);
 		
-		$arrForums = $this->getChannels();
+		$arrLastMessage = $arrForums = array();
+		$arrRawChannels = $this->getChannels(true);
+		foreach($arrRawChannels as $val){
+			if($val['type'] == '0'){
+				$arrForums[$val['id']] = 	$val['name'];
+				$arrLastMessage[$val['id']] = $val['last_message_id'];
+			}
+		}	
+		
 		$arrData = $arrTime = array();
 		
 		$Parsedown = new Parsedown();
@@ -74,16 +82,18 @@ class discordpostviewer extends gen_class {
 				//BL
 				if(is_array($arrPrivateforums) && !empty($arrPrivateforums) && in_array($forumID, $arrPrivateforums)) continue;
 			}
+
 			
-			$result = register('urlfetcher')->fetch('https://discordapp.com/api/channels/'.$forumID, array('Authorization: Bot '.$token));
-			if($result){
-				$arrJSON = json_decode($result, true);
-				
-				$strLastMessage = $arrJSON['last_message_id'];				
-				
-				$result = register('urlfetcher')->fetch('https://discordapp.com/api/channels/'.$forumID.'/messages?around='.$strLastMessage.'&limit='.($topicnumber*2), array('Authorization: Bot '.$token));
-				if($result){
-					$arrJSON = json_decode($result, true);
+			$strLastMessage = $arrLastMessage[$forumID];
+			if(!$strLastMessage) continue;
+			
+			$strCachedLastMessage = $this->pdc->get('discord.lastmessageid.'.$forumID);
+			
+			//Load from Cache
+			if($strCachedLastMessage && ($strLastMessage === $strCachedLastMessage)) {
+				$arrJSON = $this->pdc->get('discord.messages.'.$forumID);
+				if($arrJSON){
+					if(isset($arrJSON['error'])) continue;
 					
 					foreach($arrJSON as $arrPost){
 						
@@ -99,10 +109,42 @@ class discordpostviewer extends gen_class {
 						
 						$arrTime[] = strtotime($arrPost['timestamp']);
 					}
+					
+					continue;
 				}
 			}
-		}
 
+			$this->pdc->put('discord.lastmessageid.'.$forumID, $strLastMessage, 3600*24*7);
+			
+			$result = register('urlfetcher')->fetch('https://discordapp.com/api/channels/'.$forumID.'/messages?around='.$strLastMessage.'&limit='.($topicnumber*2), array('Authorization: Bot '.$token));
+			if($result){
+				$arrJSON = json_decode($result, true);
+				if($arrJSON){
+					$this->pdc->put('discord.messages.'.$forumID, $arrJSON, 3600*24*7);
+				}
+				
+				foreach($arrJSON as $arrPost){
+					$arrData[] = array(
+							'username'	=> $arrPost['author']['username'],
+							'content' 	=> nl2br($Parsedown->text($arrPost['content'])),
+							'topic_link'	=> 'https://discordapp.com/channels/'.$guildid.'/'.$forumID,
+							'topic_title'	=> '#'.$forumName,
+							'posttime'	=> $arrPost['timestamp'],
+							'topic_id'	=> $forumID,
+							'avatar'	=> ($arrPost['author']['avatar']) ? "https://cdn.discordapp.com/avatars/".$arrPost['author']['id']."/".$arrPost['author']['avatar'].".png" : "https://discordapp.com/assets/1cbd08c76f8af6dddce02c5138971129.png",
+					);
+					
+					$arrTime[] = strtotime($arrPost['timestamp']);
+				}
+				
+				
+			} else {
+				$arrJSON = array('error' => true);
+				$this->pdc->put('discord.messages.'.$forumID, $arrJSON, 3600);
+				d($arrJSON);
+			}
+		}
+		
 		//Now sort the date
 		array_multisort($arrTime, SORT_DESC, SORT_NUMERIC, $arrData);
 		
