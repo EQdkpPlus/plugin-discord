@@ -141,7 +141,6 @@ class discordpostviewer extends gen_class {
 			} else {
 				$arrJSON = array('error' => true);
 				$this->pdc->put('discord.messages.'.$forumID, $arrJSON, 3600);
-				d($arrJSON);
 			}
 		}
 		
