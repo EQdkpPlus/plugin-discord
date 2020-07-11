@@ -208,7 +208,7 @@ class discordpostviewer extends gen_class {
 					
 					// output date as well as User and text
 					$useravatar = $row['avatar'];
-					if ($useravatar) $myOut .= '<div class="user-avatar-small user-avatar-border floatLeft"><img src="'.sanitize($useravatar).'" class="user-avatar small" /></div>';
+					if ($useravatar) $myOut .= '<div class="user-avatar-small user-avatar-border floatLeft"><img src="'.sanitize($useravatar).'" class="user-avatar small" loading="lazy"/></div>';
 					$myOut .= '<div class="dclp_date small dclp_text_margin">'.sanitize($row['username']).', '.sanitize($row['topic_title']).'; '. $this->time->createTimeTag(strtotime($row['posttime']), $this->time->user_date(strtotime($row['posttime']), true)).'</div>';
 					$myOut .= '<div class="dclp_text">'. $row['content'].'</div>';
 					$myOut .= '</div><div class="clear"></div>';
@@ -238,7 +238,7 @@ class discordpostviewer extends gen_class {
 					
 					// output date as well as User and text
 					$useravatar = $row['avatar'];
-					if ($useravatar) $myOut .= '<div class="user-avatar-small user-avatar-border floatLeft"><img src="'.sanitize($useravatar).'" class="user-avatar small" /></div>';
+					if ($useravatar) $myOut .= '<div class="user-avatar-small user-avatar-border floatLeft"><img src="'.sanitize($useravatar).'" class="user-avatar small" loading="lazy"/></div>';
 					$myOut .= '<div class="dclp_date small dclp_text_margin">'.sanitize($row['username']).', '.sanitize($row['topic_title']).'<br />'. $this->time->createTimeTag(strtotime($row['posttime']), $this->time->user_date(strtotime($row['posttime']), true)).'</div>';
 					$myOut .= '<div class="dclp_text">'. $row['content'].'</div>';
 					$myOut .= '</div><div class="clear"></div>';
