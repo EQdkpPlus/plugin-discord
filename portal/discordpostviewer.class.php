@@ -38,7 +38,7 @@ class discordpostviewer extends gen_class {
 		$guildid = $arrDiscordConfig['guild_id'];
 		$token = $arrDiscordConfig['bot_token'];
 		
-		$result = register('urlfetcher')->fetch('https://discordapp.com/api/guilds/'.$guildid.'/channels', array('Authorization: Bot '.$token));
+		$result = register('urlfetcher')->fetch('https://discord.com/api/guilds/'.$guildid.'/channels', array('Authorization: Bot '.$token));
 		if($result){
 			$arrJSON = json_decode($result, true);
 			
@@ -100,7 +100,7 @@ class discordpostviewer extends gen_class {
 						$arrData[] = array(
 								'username'	=> $arrPost['author']['username'],
 								'content' 	=> nl2br($Parsedown->text($arrPost['content'])),
-								'topic_link'	=> 'https://discordapp.com/channels/'.$guildid.'/'.$forumID,
+								'topic_link'	=> 'https://discord.com/channels/'.$guildid.'/'.$forumID,
 								'topic_title'	=> '#'.$forumName,
 								'posttime'	=> $arrPost['timestamp'],
 								'topic_id'	=> $forumID,
@@ -116,7 +116,7 @@ class discordpostviewer extends gen_class {
 
 			$this->pdc->put('discord.lastmessageid.'.$forumID, $strLastMessage, 3600*24*7);
 			
-			$result = register('urlfetcher')->fetch('https://discordapp.com/api/channels/'.$forumID.'/messages?around='.$strLastMessage.'&limit='.($topicnumber*2), array('Authorization: Bot '.$token));
+			$result = register('urlfetcher')->fetch('https://discord.com/api/channels/'.$forumID.'/messages?around='.$strLastMessage.'&limit='.($topicnumber*2), array('Authorization: Bot '.$token));
 			if($result){
 				$arrJSON = json_decode($result, true);
 				if($arrJSON){
@@ -127,7 +127,7 @@ class discordpostviewer extends gen_class {
 					$arrData[] = array(
 							'username'	=> $arrPost['author']['username'],
 							'content' 	=> nl2br($Parsedown->text($arrPost['content'])),
-							'topic_link'	=> 'https://discordapp.com/channels/'.$guildid.'/'.$forumID,
+							'topic_link'	=> 'https://discord.com/channels/'.$guildid.'/'.$forumID,
 							'topic_title'	=> '#'.$forumName,
 							'posttime'	=> $arrPost['timestamp'],
 							'topic_id'	=> $forumID,

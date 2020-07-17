@@ -96,7 +96,7 @@ if (!class_exists('chat_portal_hook'))
 		$arrDiscordConfig = $this->config->get_config('discord');
 		$guild = $arrDiscordConfig['guild_id'];
 		$token = $arrDiscordConfig['bot_token'];
-		$result = register('urlfetcher')->fetch('https://discordapp.com/api/guilds/'.$guild.'/members?limit=1000', array('Authorization: Bot '.$token));
+		$result = register('urlfetcher')->fetch('https://discord.com/api/guilds/'.$guild.'/members?limit=1000', array('Authorization: Bot '.$token));
 		$strUserID = $strAvatarHash = false;
 
 		if($result){

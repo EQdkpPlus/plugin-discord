@@ -68,7 +68,7 @@ class discordAdminSettings extends page_generic {
 	public function ajaxGuildID(){
 		$arrDiscordConfig = $this->config->get_config('discord');
 		$token = $arrDiscordConfig['bot_token'];
-		$result = register('urlfetcher')->fetch('https://discordapp.com/api/users/@me/guilds', array('Authorization: Bot '.$token));
+		$result = register('urlfetcher')->fetch('https://discord.com/api/users/@me/guilds', array('Authorization: Bot '.$token));
 		if($result){
 			$arrJSON = json_decode($result, true);
 			
@@ -100,7 +100,7 @@ class discordAdminSettings extends page_generic {
 		
 		$arrValues		= $this->config->get_config('discord');
 		if($arrValues['bot_client_id'] != ""){
-			$arrFields['general']['bot_token']['after_txt'] = '<div><br /><a href="https://discordapp.com/oauth2/authorize?&client_id='.$arrValues['bot_client_id'].'&scope=bot&permissions=522304" target="_blank" class="button" onclick="init_functions()">'.$this->user->lang('discord_autorize_bot').'</a></div>';
+			$arrFields['general']['bot_token']['after_txt'] = '<div><br /><a href="https://discord.com/oauth2/authorize?&client_id='.$arrValues['bot_client_id'].'&scope=bot&permissions=522304" target="_blank" class="button" onclick="init_functions()">'.$this->user->lang('discord_autorize_bot').'</a></div>';
 		}
 		
 		if($arrValues['bot_client_id'] == "" && $arrValues['bot_token'] == ""){
