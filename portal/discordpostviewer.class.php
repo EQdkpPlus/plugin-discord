@@ -35,6 +35,8 @@ class discordpostviewer extends gen_class {
 		$arrOut = $arrJSON = array();
 		
 		$arrDiscordConfig = register('config')->get_config('discord');
+		if(!isset($arrDiscordConfig['guild_id']) || !isset($arrDiscordConfig['bot_token'])) return array();
+		
 		$guildid = $arrDiscordConfig['guild_id'];
 		$token = $arrDiscordConfig['bot_token'];
 		
@@ -71,6 +73,8 @@ class discordpostviewer extends gen_class {
 		$Parsedown->setSafeMode(true);
 		
 		$arrDiscordConfig = register('config')->get_config('discord');
+		if(!isset($arrDiscordConfig['guild_id']) || !isset($arrDiscordConfig['bot_token'])) return array();
+		
 		$guildid = $arrDiscordConfig['guild_id'];
 		$token = $arrDiscordConfig['bot_token'];
 		
