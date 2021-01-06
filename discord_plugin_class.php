@@ -41,7 +41,7 @@ class discord extends plugin_generic
     return array_merge(parent::$shortcuts, $shortcuts);
   }
 
-  public $version    = '1.2.5';
+  public $version    = '1.2.6';
   public $build      = '';
   public $copyright  = 'GodMod';
   public $vstatus    = 'Stable';
